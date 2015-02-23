@@ -11,17 +11,18 @@
 
 #include <stdio.h>
 #include "Node.h"
+#include "Graph.h"
 
 using namespace std;
 
 template <class TFloat>
-class GraphHead : virtual public Node<TFloat>{
+class GraphHead : public Node<TFloat>{
 public:
-    GraphHead(const int numIns, const int numOuts, shared_ptr< Graph<TFloat> > graph) :
-    Node<TFloat>(numIns, numOuts), _graph(graph){
-        //connect head node outputs to graph outputs?
-        for(int i = 0; i < Node<TFloat>::_numOuts; i++){
-            Node<TFloat>::_outputs[i] = _graph->outputs[i];
+    GraphHead(const int numIns, const int numOuts) :
+    Node<TFloat>(numIns, numOuts){
+        Node<TFloat>::_isHead = true;
+        for(int i = 0; i < numOuts; i++){
+            Node<TFloat>::_outputs[i] = make_shared<TFloat>(0);
         }
     };
     
@@ -42,8 +43,7 @@ public:
             }
         }
     };
-private:
-    shared_ptr< Graph<TFloat> > _graph;
+    
 };
 
 #endif /* defined(__AudioGraph_FM__graphhead__) */

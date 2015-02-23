@@ -13,48 +13,62 @@
 #include <stdlib.h>
 #include <vector>
 #include <memory>
+#include <assert.h>
 
 #include "Node.h"
 
 using namespace std;
 
+template<class TFloat>
+class Node;
+
 template <class TFloat>
 class Graph {
 public:
-    Graph(const int numOuts) : _numOuts(numOuts){
-        nodes.resize(0);
-        outputs.resize(0);
-        for(int i = 0; i < _numOuts; i++){
-            shared_ptr<TFloat> out = make_shared<TFloat>();
-            *out = 0.0;
-            outputs.push_back(out);
-        }
+    Graph(const int numOuts) : _numOuts(numOuts), _hasHead(false), _head(nullptr){
+        _nodes.resize(0);
+        outputs.resize(_numOuts);
     };
     Graph(const Graph<TFloat>& g){
-        nodes = g.nodes;
+        _nodes = g.nodes;
         outputs.resize(g.outputs.size());
     };
     
     const Graph& operator= (const Graph& rhs){
-        nodes = rhs.nodes;
+        _nodes = rhs.nodes;
         outputs.resize(rhs.outputs.size());
     };
     ~Graph(){
         
     };
     
-    void tick(){
-        unsigned long graphSize = nodes.size();
-        for (int i = 0; i < graphSize; i++){
-            //nodes[i].tick();
-            nodes.at(i)->tick();
+    shared_ptr<Node<TFloat>> insertNode(shared_ptr<Node<TFloat>> n){
+        if(n->_isHead){
+            //assuming final node has as many outputs as the graph
+            _hasHead = true;
+            _head = n;
+            for(int i = 0; i < _numOuts; i++){
+                outputs[i] = _head->_outputs[i];
+            }
         }
-        //assuming final node has as many outputs as the graph
+        _nodes.push_back(n);
+        return *(_nodes.end()-1);
     };
-    vector<shared_ptr<Node<TFloat>>> nodes;
+    
+    void tick(){
+        assert(_hasHead);
+        unsigned long graphSize = _nodes.size();
+        for (int i = 0; i < graphSize; i++){
+            _nodes[i]->tick();
+        }
+    };
+
     vector<shared_ptr<TFloat>> outputs;
 private:
     int _numOuts;
+    vector<shared_ptr<Node<TFloat>>> _nodes;
+    bool _hasHead;
+    shared_ptr<Node<TFloat>> _head;
 };
 
 #endif /* defined(__AudioGraph_FM__Graph__) */

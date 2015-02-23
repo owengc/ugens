@@ -1,53 +1,12 @@
 #include "Node.h"
 #include <math.h>
-//typedef enum {
-//    EXPENV_AMP = 0,
-//    EXPENV_ATT,
-//    EXPENV_DEC,
-//    EXPENV_SUS,
-//    EXPENV_SUSLVL,
-//    EXPENV_REL,
-//    EXPENV_CURVE,
-//    EXPENV_TRIGGER,
-//    EXPENV_NUM_PARAMS
-//} EXPENV_PARAMS;
-//
-////TODO: expose parameters
-//
-//typedef struct {
-//    double *trigger;
-//    double *out;
-//
-//    double env;
-//    double amp;
-//    double curve;
-//    double suslvl;
-//
-//    int samples[5]; /* number of samples for each stage */
-//    int counter;
-//    int stage; // 0=att  1=dec  2=sus 3=rel
-//    int sr;
-//} EXPENV_DATA;
-//
-//void *expenv_construct(int sr, double amp, double att, double dec,
-//                       double sus, double suslvl, double rel, double curve);
-//
-//void expenv_process(void *data);
-//
-//void expenv_destroy(void *data);
-//
-//void expenv_set_param(void *data, int index, double value);
-//
-//double *expenv_get_input(void *data, int index);
-//
-//void expenv_set_output(void *data, int index, double *out_buffer);
 
 using namespace std;
 
 const int NUM_STAGES = 4;
 
 template <class TFloat>
-class Expenv : virtual public Node<TFloat>{
+class Expenv : public Node<TFloat>{
 public:
     Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
            const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :

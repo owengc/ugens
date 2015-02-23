@@ -21,10 +21,14 @@
 
 using namespace std;
 
+template<class TFloat>
+class Graph;
+
 template <class TFloat>
 class Node {
+    friend class Graph<TFloat>;
 public:
-    Node(const int numIns, const int numOuts) : _numIns(numIns), _numOuts(numOuts){
+    Node(const int numIns, const int numOuts) : _numIns(numIns), _numOuts(numOuts), _isHead(false){
         _inputs.resize(_numIns);
         for(int i = 0; i < _numIns; i++){
             shared_ptr<TFloat> in = make_shared<TFloat>();
@@ -32,7 +36,7 @@ public:
             _inputs[i] = in;
         }
         _outputs.resize(_numOuts);
-        for(int i = 0; i < _numIns; i++){
+        for(int i = 0; i < _numOuts; i++){
             _outputs[i] = nullptr;
         }
         params.clear();
@@ -47,8 +51,8 @@ public:
         _outputs[outputID] = destination->_inputs[inputID];
     };
     
-    void connect(const int inputID, shared_ptr<TFloat> source){
-        _inputs[inputID] = source;
+    void constant(const int inputID, TFloat source){
+        *_inputs[inputID] = source;
     }
     
     virtual void setParameter(const string paramName, const TFloat newValue){
@@ -69,12 +73,13 @@ public:
         }
         return 0.0;
     };
-
+    
     map< string, Parameter<TFloat> > params;
 protected:
     vector<shared_ptr<TFloat>> _inputs;
     vector<shared_ptr<TFloat>> _outputs;
     const int _numIns, _numOuts;
+    bool _isHead;
 };
 
 

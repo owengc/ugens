@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C61942331A9A67C600EB48B7 /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C61942321A9A67C600EB48B7 /* libsndfile.a */; };
 		C69E09591A967B970011EA61 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C69E09581A967B970011EA61 /* main.cpp */; };
 		C69E09601A967BB40011EA61 /* libportaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C69E095F1A967BB40011EA61 /* libportaudio.a */; };
 		C69E09701A967C880011EA61 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C69E096B1A967C880011EA61 /* Carbon.framework */; };
@@ -29,6 +30,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C619422E1A998C5B00EB48B7 /* GraphTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphTypes.h; sourceTree = "<group>"; };
+		C61942301A998DAB00EB48B7 /* Ugens.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ugens.h; sourceTree = "<group>"; };
+		C61942321A9A67C600EB48B7 /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = /usr/local/Cellar/libsndfile/1.0.25/lib/libsndfile.a; sourceTree = "<absolute>"; };
 		C69E09551A967B970011EA61 /* AudioGraph_FM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AudioGraph_FM; sourceTree = BUILT_PRODUCTS_DIR; };
 		C69E09581A967B970011EA61 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C69E095F1A967BB40011EA61 /* libportaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libportaudio.a; path = ../libportaudio.a; sourceTree = "<group>"; };
@@ -53,8 +57,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C69E09741A967C880011EA61 /* CoreAudio.framework in Frameworks */,
+				C61942331A9A67C600EB48B7 /* libsndfile.a in Frameworks */,
 				C69E09601A967BB40011EA61 /* libportaudio.a in Frameworks */,
+				C69E09741A967C880011EA61 /* CoreAudio.framework in Frameworks */,
 				C69E09721A967C880011EA61 /* AudioUnit.framework in Frameworks */,
 				C69E09731A967C880011EA61 /* AudioToolbox.framework in Frameworks */,
 				C69E09711A967C880011EA61 /* CoreServices.framework in Frameworks */,
@@ -100,6 +105,8 @@
 		C69E09611A967BBE0011EA61 /* GraphStuff */ = {
 			isa = PBXGroup;
 			children = (
+				C619422E1A998C5B00EB48B7 /* GraphTypes.h */,
+				C61942301A998DAB00EB48B7 /* Ugens.h */,
 				C69E09621A967C2D0011EA61 /* Node.h */,
 				C69E09631A967C2D0011EA61 /* Graph.h */,
 				C69E09641A967C2D0011EA61 /* Parameter.h */,
@@ -122,6 +129,7 @@
 		C69E09751A967CA10011EA61 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C61942321A9A67C600EB48B7 /* libsndfile.a */,
 				C69E095F1A967BB40011EA61 /* libportaudio.a */,
 				C69E09761A967CAC0011EA61 /* portaudio.h */,
 			);
@@ -281,6 +289,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/usr/local/lib,
+					/usr/local/Cellar/libsndfile/1.0.25/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -302,6 +311,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/usr/local/lib,
+					/usr/local/Cellar/libsndfile/1.0.25/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -326,6 +336,7 @@
 				C69E095E1A967B970011EA61 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

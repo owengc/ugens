@@ -11,7 +11,7 @@ const uint64_t MAXLEN64 = 0x1000000000000000L;
 const int SINOSC_BUFFER_SIZE = 4096;
 
 template <class TFloat>
-class Sinosc : virtual public Node<TFloat>{
+class Sinosc : public Node<TFloat>{
 public:
     enum class INPUTS{
         FREQ = 0,
