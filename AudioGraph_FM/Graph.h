@@ -25,7 +25,7 @@ class Node;
 template <class TFloat>
 class Graph {
 public:
-    Graph(const int numOuts) : _numOuts(numOuts), _hasHead(false), _head(nullptr){
+    Graph(const int numOuts) : _numOuts(numOuts), _hasHead(false){
         _nodes.resize(0);
         outputs.resize(_numOuts);
     };
@@ -45,10 +45,10 @@ public:
     shared_ptr<Node<TFloat>> insertNode(shared_ptr<Node<TFloat>> n){
         if(n->_isHead){
             //assuming final node has as many outputs as the graph
+            //TODO: validate connections (make sure there aren't any nullptrs)
             _hasHead = true;
-            _head = n;
             for(int i = 0; i < _numOuts; i++){
-                outputs[i] = _head->_outputs[i];
+                outputs[i] = n->_outputs[i];
             }
         }
         _nodes.push_back(n);
@@ -68,7 +68,6 @@ private:
     int _numOuts;
     vector<shared_ptr<Node<TFloat>>> _nodes;
     bool _hasHead;
-    shared_ptr<Node<TFloat>> _head;
 };
 
 #endif /* defined(__AudioGraph_FM__Graph__) */

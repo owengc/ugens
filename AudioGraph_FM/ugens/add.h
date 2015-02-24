@@ -1,3 +1,14 @@
+//
+//  add.h
+//  AudioGraph_FM
+//
+//  Created by Owen Campbell on 2/19/15.
+//
+//
+
+#ifndef __AudioGraph_FM__add__
+#define __AudioGraph_FM__add__
+
 #include "Node.h"
 
 using namespace std;
@@ -21,4 +32,7 @@ public:
     };
 };
 
+using add_f = Add<float>;
+using add_d = Add<double>;
 
+#endif /* defined(__AudioGraph_FM__add__) */

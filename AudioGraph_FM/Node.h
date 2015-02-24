@@ -47,6 +47,7 @@ public:
     
     virtual void tick() = 0;
     
+    //TODO switch order of inputID and destination?
     void connect(const int outputID, const int inputID, shared_ptr<Node<TFloat>> destination){
         _outputs[outputID] = destination->_inputs[inputID];
     };

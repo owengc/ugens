@@ -1,3 +1,14 @@
+//
+//  expenv.h
+//  AudioGraph_FM
+//
+//  Created by Owen Campbell on 2/19/15.
+//
+//
+
+#ifndef __AudioGraph_FM__expenv__
+#define __AudioGraph_FM__expenv__
+
 #include "Node.h"
 #include <math.h>
 
@@ -9,25 +20,30 @@ template <class TFloat>
 class Expenv : public Node<TFloat>{
 public:
     Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
-           const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
+           const TFloat sus, const TFloat rel, const TFloat suslvl, const TFloat curve) :
             Node<TFloat>(1, numOuts),
     _sr(sr), _amp(amp), _suslvl(suslvl), _curve(curve), _counter(0), _stage(0){
         //initialize parameters
-        Node<TFloat>::params.insert(make_pair("amp", Parameter<TFloat>("amp", 1.0, 0.0, 1.0)));
-        Node<TFloat>::params.insert(make_pair("suslvl", Parameter<TFloat>("suslvl", 0.7, 0.01, 1.0)));
-        Node<TFloat>::params.insert(make_pair("curve", Parameter<TFloat>("curve", 3.0, 0.01, 10.0)));
-        Node<TFloat>::params.insert(make_pair("trigger", Parameter<TFloat>("trigger", 1.0, 0.0, 1.0)));
+        Node<TFloat>::params.insert(make_pair("amp", Parameter<TFloat>("amp", amp, 0.0, 1.0)));
+        Node<TFloat>::params.insert(make_pair("suslvl", Parameter<TFloat>("suslvl", suslvl, 0.01, 1.0)));
+        Node<TFloat>::params.insert(make_pair("curve", Parameter<TFloat>("curve", curve, 0.01, 10.0)));
+        Node<TFloat>::params.insert(make_pair("trigger", Parameter<TFloat>("trigger", 0.0, 0.0, 1.0)));
         
-        Node<TFloat>::params.insert(make_pair("att", Parameter<TFloat>("att", 0.25, 0.01, 1000.0)));
-        Node<TFloat>::params.insert(make_pair("dec", Parameter<TFloat>("dec", 0.25, 0.01, 1000.0)));
-        Node<TFloat>::params.insert(make_pair("sus", Parameter<TFloat>("sus", 0.25, 0.01, 1000.0)));
-        Node<TFloat>::params.insert(make_pair("rel", Parameter<TFloat>("rel", 0.25, 0.01, 1000.0)));
-        
+        Node<TFloat>::params.insert(make_pair("att", Parameter<TFloat>("att", att, 0.01, 1000.0)));
+        Node<TFloat>::params.insert(make_pair("dec", Parameter<TFloat>("dec", dec, 0.01, 1000.0)));
+        Node<TFloat>::params.insert(make_pair("sus", Parameter<TFloat>("sus", sus, 0.01, 1000.0)));
+        Node<TFloat>::params.insert(make_pair("rel", Parameter<TFloat>("rel", rel, 0.01, 1000.0)));
+
         _samples.resize(NUM_STAGES);
+        
+        //        Node<TFloat>::params["att"].setValue(att);
+        
+
         _samples[0] = getNumSamples(Node<TFloat>::params["att"].getValue());
         _samples[1] = getNumSamples(Node<TFloat>::params["dec"].getValue());
         _samples[2] = getNumSamples(Node<TFloat>::params["sus"].getValue());
         _samples[3] = getNumSamples(Node<TFloat>::params["rel"].getValue());
+        _counter = _samples[0];
     };
     
     void setParameter(const string paramName, const TFloat newValue){
@@ -97,3 +113,8 @@ private:
     int _sr;
  
 };
+
+using expenv_f = Expenv<float>;
+using expenv_d = Expenv<double>;
+
+#endif /* defined(__AudioGraph_FM__expenv__) */

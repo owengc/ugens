@@ -38,6 +38,7 @@ public:
                 sum += *Node<TFloat>::_inputs[i];
             }
             sum /= (TFloat)Node<TFloat>::_numIns;
+            //assert(sum <= 1.0 && sum >= -1.0);
             for(int i = 0; i < Node<TFloat>::_numOuts; i++){
                 *Node<TFloat>::_outputs[i] = sum;
             }
@@ -45,5 +46,8 @@ public:
     };
     
 };
+
+using graphhead_f = GraphHead<float>;
+using graphhead_d = GraphHead<double>;
 
 #endif /* defined(__AudioGraph_FM__graphhead__) */

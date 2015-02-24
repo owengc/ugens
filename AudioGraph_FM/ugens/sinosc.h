@@ -1,3 +1,14 @@
+//
+//  sinosc.h
+//  AudioGraph_FM
+//
+//  Created by Owen Campbell on 2/19/15.
+//
+//
+
+#ifndef __AudioGraph_FM__sinosc__
+#define __AudioGraph_FM__sinosc__
+
 #include "inttypes.h"
 #include <math.h>
 #include "Node.h"
@@ -51,13 +62,15 @@ public:
     };
     
     void tick(){
-        TFloat out;
+        TFloat out, amp, final;
         setParameter("freq", *Node<TFloat>::_inputs[(int)INPUTS::FREQ]);
         out = _buffer[_phs >> _lobits];
         _phs = (_phs + _inc) & PHSMASK64;
-        
+        amp = *Node<TFloat>::_inputs[(int)INPUTS::AMP];
         for(int i = 0; i < Node<TFloat>::_numOuts; i++){
-            *Node<TFloat>::_outputs[i] = out * *Node<TFloat>::_inputs[(int)INPUTS::AMP];
+            final = out * amp;
+            assert(fabsf(final) <= fabsf(amp));
+            *Node<TFloat>::_outputs[i] = final;
         }
     };
 private:
@@ -69,3 +82,9 @@ private:
     int _sr;
 };
 
+using sinosc_f = Sinosc<float>;
+using sinosc_d = Sinosc<double>;
+const int SINOSC_FREQ = (int)Sinosc<float>::INPUTS::FREQ;
+const int SINOSC_AMP = (int)Sinosc<float>::INPUTS::AMP;
+
+#endif /* defined(__AudioGraph_FM__sinosc__) */

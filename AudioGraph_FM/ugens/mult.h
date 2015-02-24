@@ -1,3 +1,14 @@
+//
+//  mult.h
+//  AudioGraph_FM
+//
+//  Created by Owen Campbell on 2/19/15.
+//
+//
+
+#ifndef __AudioGraph_FM__mult__
+#define __AudioGraph_FM__mult__
+
 #include "Node.h"
 
 //Takes as input single floating point numbers, sums them, and distributes the result to each registered output
@@ -21,5 +32,9 @@ public:
     };
 };
 
+using mult_f = Mult<float>;
+using mult_d = Mult<double>;
+
+#endif /* defined(__AudioGraph_FM__mult__) */
 
 
