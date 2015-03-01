@@ -17,25 +17,13 @@
 
 #include "GraphTypes.h"
 
-
-//int main(int argc, const char * argv[]) {
-//    // insert code here...
-//    std::cout << "Hello, World!\n";
-//    return 0;
-//}
-
 SNDFILE * sf;
 const int BLOCK_SIZE = 64;
 const int sr = 44100;
 const float duration = 5;
 const int sfSamples = duration * sr;
 float sfBuffer[sfSamples];
-
-
-
 float * writePos = sfBuffer;
-//const float inc = 2.0 / sr;
-//float val = -1.0;
 
 typedef struct
 {
@@ -63,13 +51,6 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
             // assert(fabsf(temp) <= 1.0);
             *out++ = *(data->g->outputs[j]);
         }
-//        if(val >= 1.0){
-//            val = -1.0;
-//        }
-//        else{
-//            val += inc;
-//        }
-//        *writePos++ = val;
         *writePos++ = *out;
     }
     return 0;
@@ -97,10 +78,10 @@ int main(void)
     float modFreq =  100;
     
     //create ugen graph
-    node_f modulator = data.g->insertNode(node_f(new sinosc_f(2, 1, sr, modFreq, modAmp)));
-    node_f adder = data.g->insertNode(node_f(new add_f(2, 1)));
-    node_f carrier = data.g->insertNode(node_f(new sinosc_f(2, 1, sr, carrFreq, carrAmp)));
-    node_f head = data.g->insertNode(node_f(new graphhead_f(1, 2)));
+    node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 1, sr, modFreq, modAmp)));
+    node_f adder = data.g->createNode(node_f(new add_f(2, 1)));
+    node_f carrier = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq, carrAmp)));
+    node_f head = data.g->createNode(node_f(new graphhead_f(1, 2)));
     
     //initialize constants and connect ugens
     modulator->constant(SINOSC_FREQ, modFreq);
@@ -125,19 +106,19 @@ int main(void)
     //create ugen graph
     //Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
     //    const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
-    node_f carrenv = data.g->insertNode(node_f(new expenv_f(1, 1, sr, carrAmp,
+    node_f carrenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, carrAmp,
                                                              0.35 * duration, 0.05 * duration, 0.2 * duration, 0.3 * duration,
                                                              0.7 * carrAmp, 2)));
-    node_f modenv = data.g->insertNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
+    node_f modenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
                                                             0.05 * duration, 0.2 * duration, 0.2 * duration, 0.55 * duration,
                                                             0.5 * modIndexDev, 3)));
-    node_f adder1 = data.g->insertNode(node_f(new add_f(2, 1)));
-    node_f mult = data.g->insertNode(node_f(new mult_f(2, 1)));
-    node_f modulator = data.g->insertNode(node_f(new sinosc_f(2, 1, sr, 1, 1)));
-    node_f adder2 = data.g->insertNode(node_f(new add_f(2, 1)));
+    node_f adder1 = data.g->createNode(node_f(new add_f(2, 1)));
+    node_f mult = data.g->createNode(node_f(new mult_f(2, 1)));
+    node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 1, sr, 1, 1)));
+    node_f adder2 = data.g->createNode(node_f(new add_f(2, 1)));
 
-    node_f carrier = data.g->insertNode(node_f(new sinosc_f(2, 1, sr, carrFreq, 1.0)));
-    node_f head = data.g->insertNode(node_f(new graphhead_f(1, 2)));
+    node_f carrier = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq, 1.0)));
+    node_f head = data.g->createNode(node_f(new graphhead_f(1, 2)));
     
     //initialize constants and connect ugens
 
@@ -169,26 +150,26 @@ int main(void)
     //create ugen graph
     //Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
     //    const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
-    node_f carrenv = data.g->insertNode(node_f(new expenv_f(1, 2, sr, carrAmp,
+    node_f carrenv = data.g->createNode(node_f(new expenv_f(1, 2, sr, carrAmp,
                                                             0.35 * duration, 0.05 * duration, 0.2 * duration, 0.3 * duration,
                                                             0.7 * carrAmp, 2)));
-    node_f modenv = data.g->insertNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
+    node_f modenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
                                                            0.05 * duration, 0.2 * duration, 0.2 * duration, 0.55 * duration,
                                                            0.5 * modIndexDev, 3)));
-    node_f adder1 = data.g->insertNode(node_f(new add_f(2, 1)));
-    node_f modulator = data.g->insertNode(node_f(new sinosc_f(2, 2, sr, 1, 1)));
+    node_f adder1 = data.g->createNode(node_f(new add_f(2, 1)));
+    node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 2, sr, 1, 1)));
     
-    node_f mult1 = data.g->insertNode(node_f(new mult_f(2, 1)));
-    node_f adder2 = data.g->insertNode(node_f(new add_f(2, 1)));
-    node_f adder3 = data.g->insertNode(node_f(new add_f(2, 1)));
+    node_f mult1 = data.g->createNode(node_f(new mult_f(2, 1)));
+    node_f adder2 = data.g->createNode(node_f(new add_f(2, 1)));
+    node_f adder3 = data.g->createNode(node_f(new add_f(2, 1)));
 
-    node_f mult2 = data.g->insertNode(node_f(new mult_f(2, 1)));
-    node_f mult3 = data.g->insertNode(node_f(new mult_f(2, 1)));
-    node_f carrier1 = data.g->insertNode(node_f(new sinosc_f(2, 1, sr, carrFreq1, 1.0)));
-    node_f carrier2 = data.g->insertNode(node_f(new sinosc_f(2, 1, sr, carrFreq2, 1.0)));
+    node_f mult2 = data.g->createNode(node_f(new mult_f(2, 1)));
+    node_f mult3 = data.g->createNode(node_f(new mult_f(2, 1)));
+    node_f carrier1 = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq1, 1.0)));
+    node_f carrier2 = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq2, 1.0)));
 
-    node_f adder4 = data.g->insertNode(node_f(new add_f(2, 1)));
-    node_f head = data.g->insertNode(node_f(new graphhead_f(1, 2)));
+    node_f adder4 = data.g->createNode(node_f(new add_f(2, 1)));
+    node_f head = data.g->createNode(node_f(new graphhead_f(1, 2)));
     
     //initialize constants and connect ugens
     

@@ -42,11 +42,12 @@ public:
         
     };
     
-    shared_ptr<Node<TFloat>> insertNode(shared_ptr<Node<TFloat>> n){
+    shared_ptr<Node<TFloat>> createNode(shared_ptr<Node<TFloat>> n){
         if(n->_isHead){
             //assuming final node has as many outputs as the graph
             //TODO: validate connections (make sure there aren't any nullptrs)
             _hasHead = true;
+            _head = n;
             for(int i = 0; i < _numOuts; i++){
                 outputs[i] = n->_outputs[i];
             }
@@ -57,17 +58,18 @@ public:
     
     void tick(){
         assert(_hasHead);
-        unsigned long graphSize = _nodes.size();
-        for (int i = 0; i < graphSize; i++){
-            _nodes[i]->tick();
-        }
+        //unsigned long graphSize = _nodes.size();
+        _head->traverse();
     };
+    
+    
 
     vector<shared_ptr<TFloat>> outputs;
 private:
     int _numOuts;
     vector<shared_ptr<Node<TFloat>>> _nodes;
     bool _hasHead;
+    shared_ptr<Node<TFloat>> _head;
 };
 
 #endif /* defined(__AudioGraph_FM__Graph__) */

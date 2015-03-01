@@ -25,15 +25,15 @@ template<class TFloat>
 class Graph;
 
 template <class TFloat>
-class Node {
+class Node : public enable_shared_from_this<Node<TFloat>>{
     friend class Graph<TFloat>;
 public:
     Node(const int numIns, const int numOuts) : _numIns(numIns), _numOuts(numOuts), _isHead(false){
         _inputs.resize(_numIns);
+        _sources.resize(_numIns);
         for(int i = 0; i < _numIns; i++){
-            shared_ptr<TFloat> in = make_shared<TFloat>();
-            *in = 0.0;
-            _inputs[i] = in;
+            _inputs[i] = nullptr;
+            _sources[i] = nullptr;
         }
         _outputs.resize(_numOuts);
         for(int i = 0; i < _numOuts; i++){
@@ -45,15 +45,28 @@ public:
         
     };
     
+    void traverse(){
+        for(int i = 0; i < _numIns; i++){
+            if(_inputs[i] == nullptr){
+                //cout << "Input " << i << " of " + _name + " has no source!" << endl;
+                abort();
+            }
+            else if(_sources[i] != nullptr){
+                _sources[i]->traverse();
+            }
+        }
+        tick();
+    }
+
     virtual void tick() = 0;
-    
-    //TODO switch order of inputID and destination?
+
     void connect(const int outputID, const int inputID, shared_ptr<Node<TFloat>> destination){
         _outputs[outputID] = destination->_inputs[inputID];
+        destination->_sources[inputID] = shared_from_this();
     };
     
-    void constant(const int inputID, TFloat source){
-        *_inputs[inputID] = source;
+    void constant(const int inputID, TFloat value){
+        _inputs[inputID] = make_shared<TFloat>(value);
     }
     
     virtual void setParameter(const string paramName, const TFloat newValue){
@@ -79,8 +92,10 @@ public:
 protected:
     vector<shared_ptr<TFloat>> _inputs;
     vector<shared_ptr<TFloat>> _outputs;
+    vector<shared_ptr<Node<TFloat>>> _sources;
     const int _numIns, _numOuts;
     bool _isHead;
+    const string _name;
 };
 
 
