@@ -31,13 +31,13 @@ public:
     
     
     Sinosc(const int numIns, const int numOuts, const int sr, const TFloat freq, const TFloat amp) :
-    Node<TFloat>(2, numOuts),
+    Node<TFloat>("sinosc_" + to_string(_instanceCounter++), 2, numOuts),
     _phs(0), _inc(0), _lobits(0), _sr(sr){
         //initialize parameters
         Node<TFloat>::params.insert(make_pair("freq", Parameter<TFloat>("freq", freq, 1.0, 22000.0)));
         Node<TFloat>::params.insert(make_pair("amp", Parameter<TFloat>("amp", amp, 0.0, 1.0)));
-        *Node<TFloat>::_inputs[(int)INPUTS::FREQ] = freq;
-        *Node<TFloat>::_inputs[(int)INPUTS::AMP] = amp;
+        Node<TFloat>::constant((int)INPUTS::FREQ, freq);
+        Node<TFloat>::constant((int)INPUTS::AMP, amp);
         
         _phs = 0;
         _lobits = log2(MAXLEN64/SINOSC_BUFFER_SIZE);
@@ -80,7 +80,11 @@ private:
 
     TFloat _buffer[SINOSC_BUFFER_SIZE];
     int _sr;
+    static unsigned int _instanceCounter;
 };
+
+template <typename TFloat>
+unsigned int Sinosc<TFloat>::_instanceCounter = 0;
 
 using sinosc_f = Sinosc<float>;
 using sinosc_d = Sinosc<double>;

@@ -19,7 +19,7 @@ template <class TFloat>
 class GraphHead : public Node<TFloat>{
 public:
     GraphHead(const int numIns, const int numOuts) :
-    Node<TFloat>(numIns, numOuts){
+    Node<TFloat>("graphhead_" + to_string(_instanceCounter++), numIns, numOuts){
         Node<TFloat>::_isHead = true;
         for(int i = 0; i < numOuts; i++){
             Node<TFloat>::_outputs[i] = make_shared<TFloat>(0);
@@ -45,7 +45,11 @@ public:
         }
     };
     
+    static unsigned int _instanceCounter;
 };
+
+template<typename TFloat>
+unsigned int GraphHead<TFloat>::_instanceCounter = 0;
 
 using graphhead_f = GraphHead<float>;
 using graphhead_d = GraphHead<double>;

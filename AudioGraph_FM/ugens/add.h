@@ -17,7 +17,7 @@ using namespace std;
 template <class TFloat>
 class Add : public Node<TFloat>{
 public:
-    Add(const int numIns, const int numOuts) : Node<TFloat>(numIns, numOuts){
+    Add(const int numIns, const int numOuts) : Node<TFloat>("add_" + to_string(_instanceCounter++), numIns, numOuts){
     
     };
     
@@ -30,7 +30,11 @@ public:
             *Node<TFloat>::_outputs[i] = sum;
         }
     };
+    static unsigned int _instanceCounter;
 };
+
+template<typename TFloat>
+unsigned int Add<TFloat>::_instanceCounter = 0;
 
 using add_f = Add<float>;
 using add_d = Add<double>;

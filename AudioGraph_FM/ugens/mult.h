@@ -17,7 +17,7 @@ using namespace std;
 template <class TFloat>
 class Mult : public Node<TFloat>{
 public:
-    Mult(const int numIns, const int numOuts) : Node<TFloat>(numIns, numOuts){
+    Mult(const int numIns, const int numOuts) : Node<TFloat>("mult_" + to_string(_instanceCounter++), numIns, numOuts){
         
     };
     
@@ -30,7 +30,11 @@ public:
             *Node<TFloat>::_outputs[i] = product;
         }
     };
+    static unsigned int _instanceCounter;
 };
+
+template<typename TFloat>
+unsigned int Mult<TFloat>::_instanceCounter = 0;
 
 using mult_f = Mult<float>;
 using mult_d = Mult<double>;

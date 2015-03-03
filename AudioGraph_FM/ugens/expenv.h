@@ -21,7 +21,7 @@ class Expenv : public Node<TFloat>{
 public:
     Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
            const TFloat sus, const TFloat rel, const TFloat suslvl, const TFloat curve) :
-            Node<TFloat>(1, numOuts),
+            Node<TFloat>("expenv_" + to_string(_instanceCounter++), 1, numOuts),
     _sr(sr), _amp(amp), _suslvl(suslvl), _curve(curve), _counter(0), _stage(0){
         //initialize parameters
         Node<TFloat>::params.insert(make_pair("amp", Parameter<TFloat>("amp", amp, 0.0, 1.0)));
@@ -111,8 +111,12 @@ private:
     int _counter;
     int _stage;
     int _sr;
- 
+    
+    static unsigned int _instanceCounter;
 };
+
+template<typename TFloat>
+unsigned int Expenv<TFloat>::_instanceCounter = 0;
 
 using expenv_f = Expenv<float>;
 using expenv_d = Expenv<double>;

@@ -20,8 +20,8 @@
 SNDFILE * sf;
 const int BLOCK_SIZE = 64;
 const int sr = 44100;
-const float duration = 5;
-const int sfSamples = duration * sr;
+const float dur_sec = 5;
+const int sfSamples = dur_sec * sr;
 float sfBuffer[sfSamples];
 float * writePos = sfBuffer;
 
@@ -47,9 +47,9 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
     for( i=0; i<framesPerBuffer; i++ ){
         data->g->tick();
         for(j = 0; j < data->numOuts; j++){
-            temp = *data->g->outputs[j];
+            temp = data->g->output(j);
             // assert(fabsf(temp) <= 1.0);
-            *out++ = *(data->g->outputs[j]);
+            *out++ = data->g->output(j);
         }
         *writePos++ = *out;
     }
@@ -63,7 +63,7 @@ int main(void)
     PaError err;
     paData data;
       data.numOuts = 2;
-    data.g = graph<float>(new Graph<float>(data.numOuts));
+    data.g = graph<float>(new Graph<float>());
     char filename[16];
 
     
@@ -107,10 +107,10 @@ int main(void)
     //Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
     //    const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
     node_f carrenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, carrAmp,
-                                                             0.35 * duration, 0.05 * duration, 0.2 * duration, 0.3 * duration,
+                                                             0.35 * dur_sec, 0.05 * dur_sec, 0.2 * dur_sec, 0.3 * dur_sec,
                                                              0.7 * carrAmp, 2)));
     node_f modenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
-                                                            0.05 * duration, 0.2 * duration, 0.2 * duration, 0.55 * duration,
+                                                            0.05 * dur_sec, 0.2 * dur_sec, 0.2 * dur_sec, 0.55 * dur_sec,
                                                             0.5 * modIndexDev, 3)));
     node_f adder1 = data.g->createNode(node_f(new add_f(2, 1)));
     node_f mult = data.g->createNode(node_f(new mult_f(2, 1)));
@@ -151,10 +151,10 @@ int main(void)
     //Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
     //    const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
     node_f carrenv = data.g->createNode(node_f(new expenv_f(1, 2, sr, carrAmp,
-                                                            0.35 * duration, 0.05 * duration, 0.2 * duration, 0.3 * duration,
+                                                            0.35 * dur_sec, 0.05 * dur_sec, 0.2 * dur_sec, 0.3 * dur_sec,
                                                             0.7 * carrAmp, 2)));
     node_f modenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
-                                                           0.05 * duration, 0.2 * duration, 0.2 * duration, 0.55 * duration,
+                                                           0.05 * dur_sec, 0.2 * dur_sec, 0.2 * dur_sec, 0.55 * dur_sec,
                                                            0.5 * modIndexDev, 3)));
     node_f adder1 = data.g->createNode(node_f(new add_f(2, 1)));
     node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 2, sr, 1, 1)));
@@ -237,7 +237,7 @@ int main(void)
     if( err != paNoError )
         printf( "PortAudio error: %s\n", Pa_GetErrorText( err ) );
     
-    Pa_Sleep(duration * 1000 + (2 * BLOCK_SIZE/sr));
+    Pa_Sleep(dur_sec * 1000 + (2 * BLOCK_SIZE/sr));
     
     err = Pa_StopStream( stream );
     if( err != paNoError )
