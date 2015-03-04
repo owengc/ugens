@@ -14,8 +14,7 @@
 #include <limits>
 #include <math.h>
 #include <assert.h>
-
-#include "TreeTypes.h"
+#include "Ugens.h"
 
 SNDFILE * sf;
 const int BLOCK_SIZE = 64;
