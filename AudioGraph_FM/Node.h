@@ -17,7 +17,6 @@
 #include <vector>
 #include <chrono>
 
-#include "Graph.h"
 #include "Parameter.h"
 
 using namespace std;
@@ -63,11 +62,6 @@ public:
     }
 
     virtual void tick() = 0;
-
-//    void connect(const int outputID, const int inputID, shared_ptr<Node<TFloat>> destination){
-//        destination->_inputs[inputID] = _outputs[outputID];
-//        destination->_sources[inputID] = Node<TFloat>::shared_from_this();
-//    };
     
     void setInput(const int inputID, const int outputID, shared_ptr<Node<TFloat>> source){
         _inputs[inputID] = source->_outputs[outputID];

@@ -36,7 +36,6 @@
 		C69E09581A967B970011EA61 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C69E095F1A967BB40011EA61 /* libportaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libportaudio.a; path = ../libportaudio.a; sourceTree = "<group>"; };
 		C69E09621A967C2D0011EA61 /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
-		C69E09631A967C2D0011EA61 /* Graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Graph.h; sourceTree = "<group>"; };
 		C69E09641A967C2D0011EA61 /* Parameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameter.h; sourceTree = "<group>"; };
 		C69E096B1A967C880011EA61 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Carbon.framework; sourceTree = "<group>"; };
 		C69E096C1A967C880011EA61 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreServices.framework; sourceTree = "<group>"; };
@@ -49,7 +48,6 @@
 		C69E097A1A967D540011EA61 /* mult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mult.h; path = ugens/mult.h; sourceTree = "<group>"; };
 		C69E097B1A967D540011EA61 /* expenv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = expenv.h; path = ugens/expenv.h; sourceTree = "<group>"; };
 		C6C438341AA6C49C00109709 /* root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = root.h; path = ugens/root.h; sourceTree = "<group>"; };
-		C6C438351AA6CAB500109709 /* TreeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,10 +103,8 @@
 		C69E09611A967BBE0011EA61 /* TreeStuff */ = {
 			isa = PBXGroup;
 			children = (
-				C6C438351AA6CAB500109709 /* TreeTypes.h */,
 				C61942301A998DAB00EB48B7 /* Ugens.h */,
 				C69E09621A967C2D0011EA61 /* Node.h */,
-				C69E09631A967C2D0011EA61 /* Graph.h */,
 				C69E09641A967C2D0011EA61 /* Parameter.h */,
 			);
 			name = TreeStuff;
