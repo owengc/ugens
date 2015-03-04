@@ -62,7 +62,7 @@ int main(void)
     PaError err;
     paData data;
     data.numOuts = 2;
-    data.tree = root_ptr_f(new root_f(1,2));
+    data.tree = root_ptr_f(new root_f(1, data.numOuts));
     char filename[16];
 
     
@@ -70,19 +70,18 @@ int main(void)
     
 #if ( CIRCUIT == 1)
     sprintf(filename, "circuit1.wav");
-    //declare setInputs
+    //declare constants
     float carrAmp = 0.5;
     float carrFreq = 100;
     float modAmp = 400;
     float modFreq =  100;
     
-    //create ugen graph
-    data.tree = root_ptr_f(new root_f(1, 2));
+    //create ugens
     node_ptr_f modulator = data.tree->addNode(node_ptr_f(new sinosc_f("modulator", 2, 1, sr, modFreq, modAmp)));
     node_ptr_f adder = data.tree->addNode(node_ptr_f(new add_f("adder", 2, 1)));
     node_ptr_f carrier = data.tree->addNode(node_ptr_f(new sinosc_f("carrier", 2, 1, sr, carrFreq, carrAmp)));
     
-    //initialize setInputs and setInput ugens
+    //connect ugens
     modulator->setInput(SINOSC_FREQ, modFreq);
     modulator->setInput(SINOSC_AMP, modAmp);
     
@@ -96,15 +95,14 @@ int main(void)
     
 #elif (CIRCUIT == 2)
     sprintf(filename, "circuit2.wav");
-    //declare setInputs
+    //declare constants
     float modIndex = 0;
     float modIndexDev = 1;
     float carrAmp = 0.5;
     float carrFreq = 440;
     float modFreq =  220;
     
-    //create ugen graph
-    data.tree = root_ptr_f(new root_f(1, 2));
+    //create ugens
     node_ptr_f carrenv = data.tree->addNode(node_ptr_f(new expenv_f("carrenv", 0, 1, sr, carrAmp,
                                                              0.35 * dur_sec, 0.05 * dur_sec, 0.2 * dur_sec, 0.3 * dur_sec,
                                                              0.7 * carrAmp, 2)));
@@ -118,7 +116,7 @@ int main(void)
 
     node_ptr_f carrier = data.tree->addNode(node_ptr_f(new sinosc_f("carrier", 2, 1, sr, carrFreq, 1.0)));
     
-    //initialize setInputs and setInput ugens
+    //connect ugens
     adder1->setInput(0, modIndex);
     adder1->setInput(1, 0, modenv);
     
@@ -138,7 +136,7 @@ int main(void)
 
 #elif (CIRCUIT == 3)
     sprintf(filename, "circuit3.wav");
-    //declare setInputs
+    //declare constants
     float modIndex = 0;
     float modIndexDev = 1;
     float carrAmp = 0.5;
@@ -146,8 +144,7 @@ int main(void)
     float carrFreq2 = 2100;
     float modFreq =  300;
     
-    //create ugen graph
-    data.tree = root_ptr_f(new root_f(1, 2));
+    //create ugens
     node_ptr_f carrenv = data.tree->addNode(node_ptr_f(new expenv_f("carrenv", 1, 2, sr, carrAmp,
                                                             0.35 * dur_sec, 0.05 * dur_sec, 0.2 * dur_sec, 0.3 * dur_sec,
                                                             0.7 * carrAmp, 2)));
@@ -168,7 +165,7 @@ int main(void)
 
     node_ptr_f adder4 = data.tree->addNode(node_ptr_f(new add_f("adder4", 2, 1)));
     
-    //initialize setInputs and setInput ugens
+    //connect ugens
     adder1->setInput(0, modIndex);
     adder1->setInput(1, 0, modenv);
     
