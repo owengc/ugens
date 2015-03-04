@@ -17,7 +17,8 @@ using namespace std;
 template <class TFloat>
 class Mult : public Node<TFloat>{
 public:
-    Mult(const int numIns, const int numOuts) : Node<TFloat>("mult_" + to_string(_instanceCounter++), numIns, numOuts){
+    Mult(const string& name, const int numIns, const int numOuts) :
+    Node<TFloat>(name, numIns, numOuts){
         
     };
     
@@ -30,14 +31,14 @@ public:
             *Node<TFloat>::_outputs[i] = product;
         }
     };
-    static unsigned int _instanceCounter;
 };
 
-template<typename TFloat>
-unsigned int Mult<TFloat>::_instanceCounter = 0;
 
+template<class TFloat> using mult_ptr = shared_ptr<Mult<TFloat>>;
 using mult_f = Mult<float>;
 using mult_d = Mult<double>;
+using mult_ptr_f = shared_ptr<Mult<float>>;
+using mult_ptr_d = shared_ptr<Mult<double>>;
 
 #endif /* defined(__AudioGraph_FM__mult__) */
 

@@ -30,14 +30,14 @@ public:
     };
     
     
-    Sinosc(const int numIns, const int numOuts, const int sr, const TFloat freq, const TFloat amp) :
-    Node<TFloat>("sinosc_" + to_string(_instanceCounter++), 2, numOuts),
+    Sinosc(const string& name, const int numIns, const int numOuts, const int sr, const TFloat freq, const TFloat amp) :
+    Node<TFloat>(name, 2, numOuts),
     _phs(0), _inc(0), _lobits(0), _sr(sr){
         //initialize parameters
         Node<TFloat>::params.insert(make_pair("freq", Parameter<TFloat>("freq", freq, 1.0, 22000.0)));
         Node<TFloat>::params.insert(make_pair("amp", Parameter<TFloat>("amp", amp, 0.0, 1.0)));
-        Node<TFloat>::constant((int)INPUTS::FREQ, freq);
-        Node<TFloat>::constant((int)INPUTS::AMP, amp);
+        Node<TFloat>::setInput((int)INPUTS::FREQ, freq);
+        Node<TFloat>::setInput((int)INPUTS::AMP, amp);
         
         _phs = 0;
         _lobits = log2(MAXLEN64/SINOSC_BUFFER_SIZE);
@@ -80,14 +80,14 @@ private:
 
     TFloat _buffer[SINOSC_BUFFER_SIZE];
     int _sr;
-    static unsigned int _instanceCounter;
 };
 
-template <typename TFloat>
-unsigned int Sinosc<TFloat>::_instanceCounter = 0;
-
+template<class TFloat> using sinosc_ptr = shared_ptr<Sinosc<TFloat>>;
 using sinosc_f = Sinosc<float>;
 using sinosc_d = Sinosc<double>;
+using sinosc_ptr_f = shared_ptr<Sinosc<float>>;
+using sinosc_ptr_d = shared_ptr<Sinosc<double>>;
+
 const int SINOSC_FREQ = (int)Sinosc<float>::INPUTS::FREQ;
 const int SINOSC_AMP = (int)Sinosc<float>::INPUTS::AMP;
 

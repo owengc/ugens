@@ -17,7 +17,8 @@ using namespace std;
 template <class TFloat>
 class Add : public Node<TFloat>{
 public:
-    Add(const int numIns, const int numOuts) : Node<TFloat>("add_" + to_string(_instanceCounter++), numIns, numOuts){
+    Add(const string& name, const int numIns, const int numOuts) :
+    Node<TFloat>(name, numIns, numOuts){
     
     };
     
@@ -30,13 +31,12 @@ public:
             *Node<TFloat>::_outputs[i] = sum;
         }
     };
-    static unsigned int _instanceCounter;
 };
 
-template<typename TFloat>
-unsigned int Add<TFloat>::_instanceCounter = 0;
-
+template<class TFloat> using add_ptr = shared_ptr<Add<TFloat>>;
 using add_f = Add<float>;
 using add_d = Add<double>;
+using add_ptr_f = shared_ptr<Add<float>>;
+using add_ptr_d = shared_ptr<Add<double>>;
 
 #endif /* defined(__AudioGraph_FM__add__) */

@@ -30,7 +30,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C619422E1A998C5B00EB48B7 /* GraphTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphTypes.h; sourceTree = "<group>"; };
 		C61942301A998DAB00EB48B7 /* Ugens.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ugens.h; sourceTree = "<group>"; };
 		C61942321A9A67C600EB48B7 /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = /usr/local/Cellar/libsndfile/1.0.25/lib/libsndfile.a; sourceTree = "<absolute>"; };
 		C69E09551A967B970011EA61 /* AudioGraph_FM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AudioGraph_FM; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,10 +45,11 @@
 		C69E096F1A967C880011EA61 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreAudio.framework; sourceTree = "<group>"; };
 		C69E09761A967CAC0011EA61 /* portaudio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = portaudio.h; sourceTree = "<group>"; };
 		C69E09771A967D540011EA61 /* add.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = add.h; path = ugens/add.h; sourceTree = "<group>"; };
-		C69E09781A967D540011EA61 /* graphhead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = graphhead.h; path = ugens/graphhead.h; sourceTree = "<group>"; };
 		C69E09791A967D540011EA61 /* sinosc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sinosc.h; path = ugens/sinosc.h; sourceTree = "<group>"; };
 		C69E097A1A967D540011EA61 /* mult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mult.h; path = ugens/mult.h; sourceTree = "<group>"; };
 		C69E097B1A967D540011EA61 /* expenv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = expenv.h; path = ugens/expenv.h; sourceTree = "<group>"; };
+		C6C438341AA6C49C00109709 /* root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = root.h; path = ugens/root.h; sourceTree = "<group>"; };
+		C6C438351AA6CAB500109709 /* TreeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,29 +96,29 @@
 			children = (
 				C69E09751A967CA10011EA61 /* Libraries */,
 				C69E09581A967B970011EA61 /* main.cpp */,
-				C69E09611A967BBE0011EA61 /* GraphStuff */,
+				C69E09611A967BBE0011EA61 /* TreeStuff */,
 				C69E09651A967C330011EA61 /* Ugens */,
 			);
 			path = AudioGraph_FM;
 			sourceTree = "<group>";
 		};
-		C69E09611A967BBE0011EA61 /* GraphStuff */ = {
+		C69E09611A967BBE0011EA61 /* TreeStuff */ = {
 			isa = PBXGroup;
 			children = (
-				C619422E1A998C5B00EB48B7 /* GraphTypes.h */,
+				C6C438351AA6CAB500109709 /* TreeTypes.h */,
 				C61942301A998DAB00EB48B7 /* Ugens.h */,
 				C69E09621A967C2D0011EA61 /* Node.h */,
 				C69E09631A967C2D0011EA61 /* Graph.h */,
 				C69E09641A967C2D0011EA61 /* Parameter.h */,
 			);
-			name = GraphStuff;
+			name = TreeStuff;
 			sourceTree = "<group>";
 		};
 		C69E09651A967C330011EA61 /* Ugens */ = {
 			isa = PBXGroup;
 			children = (
 				C69E09771A967D540011EA61 /* add.h */,
-				C69E09781A967D540011EA61 /* graphhead.h */,
+				C6C438341AA6C49C00109709 /* root.h */,
 				C69E09791A967D540011EA61 /* sinosc.h */,
 				C69E097A1A967D540011EA61 /* mult.h */,
 				C69E097B1A967D540011EA61 /* expenv.h */,

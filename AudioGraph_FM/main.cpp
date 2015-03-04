@@ -15,7 +15,7 @@
 #include <math.h>
 #include <assert.h>
 
-#include "GraphTypes.h"
+#include "TreeTypes.h"
 
 SNDFILE * sf;
 const int BLOCK_SIZE = 64;
@@ -27,7 +27,7 @@ float * writePos = sfBuffer;
 
 typedef struct
 {
-    graph<float> g;
+    root_ptr_f tree;
     int numOuts;
 } paData;
 
@@ -45,11 +45,11 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
     float temp;
     (void) in; /* Prevent unused variable warning. */
     for( i=0; i<framesPerBuffer; i++ ){
-        data->g->tick();
+        data->tree->traverse();
         for(j = 0; j < data->numOuts; j++){
-            temp = data->g->output(j);
-            // assert(fabsf(temp) <= 1.0);
-            *out++ = data->g->output(j);
+            temp = data->tree->output(j);
+             assert(fabsf(temp) <= 1.0);
+            *out++ = data->tree->output(j);
         }
         *writePos++ = *out;
     }
@@ -62,41 +62,42 @@ int main(void)
 {
     PaError err;
     paData data;
-      data.numOuts = 2;
-    data.g = graph<float>(new Graph<float>());
+    data.numOuts = 2;
+    data.tree = root_ptr_f(new root_f(1,2));
     char filename[16];
 
     
-#define CIRCUIT 1
+#define CIRCUIT 3
     
 #if ( CIRCUIT == 1)
     sprintf(filename, "circuit1.wav");
-    //declare constants
+    //declare setInputs
     float carrAmp = 0.5;
     float carrFreq = 100;
     float modAmp = 400;
     float modFreq =  100;
     
     //create ugen graph
-    node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 1, sr, modFreq, modAmp)));
-    node_f adder = data.g->createNode(node_f(new add_f(2, 1)));
-    node_f carrier = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq, carrAmp)));
-    node_f head = data.g->createNode(node_f(new graphhead_f(1, 2)));
+    data.tree = root_ptr_f(new root_f(1, 2));
+    node_ptr_f modulator = data.tree->addNode(node_ptr_f(new sinosc_f("modulator", 2, 1, sr, modFreq, modAmp)));
+    node_ptr_f adder = data.tree->addNode(node_ptr_f(new add_f("adder", 2, 1)));
+    node_ptr_f carrier = data.tree->addNode(node_ptr_f(new sinosc_f("carrier", 2, 1, sr, carrFreq, carrAmp)));
     
-    //initialize constants and connect ugens
-    modulator->constant(SINOSC_FREQ, modFreq);
-    modulator->constant(SINOSC_AMP, modAmp);
+    //initialize setInputs and setInput ugens
+    modulator->setInput(SINOSC_FREQ, modFreq);
+    modulator->setInput(SINOSC_AMP, modAmp);
     
-    adder->constant(0, carrFreq);
-    modulator->connect(0, 1, adder);
-    adder->connect(0, SINOSC_FREQ, carrier);
+    adder->setInput(0, carrFreq);
+    adder->setInput(1, 0, modulator);
     
-    carrier->constant(SINOSC_AMP, carrAmp);
-    carrier->connect(0, 0, head);
+    carrier->setInput(SINOSC_FREQ, 0, adder);
+    carrier->setInput(SINOSC_AMP, carrAmp);
+    
+    data.tree->setInput(0, 0, carrier);
     
 #elif (CIRCUIT == 2)
     sprintf(filename, "circuit2.wav");
-    //declare constants
+    //declare setInputs
     float modIndex = 0;
     float modIndexDev = 1;
     float carrAmp = 0.5;
@@ -104,42 +105,41 @@ int main(void)
     float modFreq =  220;
     
     //create ugen graph
-    //Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
-    //    const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
-    node_f carrenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, carrAmp,
+    data.tree = root_ptr_f(new root_f(1, 2));
+    node_ptr_f carrenv = data.tree->addNode(node_ptr_f(new expenv_f("carrenv", 0, 1, sr, carrAmp,
                                                              0.35 * dur_sec, 0.05 * dur_sec, 0.2 * dur_sec, 0.3 * dur_sec,
                                                              0.7 * carrAmp, 2)));
-    node_f modenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
+    node_ptr_f modenv = data.tree->addNode(node_ptr_f(new expenv_f("modenv", 0, 1, sr, modIndexDev,
                                                             0.05 * dur_sec, 0.2 * dur_sec, 0.2 * dur_sec, 0.55 * dur_sec,
                                                             0.5 * modIndexDev, 3)));
-    node_f adder1 = data.g->createNode(node_f(new add_f(2, 1)));
-    node_f mult = data.g->createNode(node_f(new mult_f(2, 1)));
-    node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 1, sr, 1, 1)));
-    node_f adder2 = data.g->createNode(node_f(new add_f(2, 1)));
+    node_ptr_f adder1 = data.tree->addNode(node_ptr_f(new add_f("adder1", 2, 1)));
+    node_ptr_f mult = data.tree->addNode(node_ptr_f(new mult_f("mult", 2, 1)));
+    node_ptr_f modulator = data.tree->addNode(node_ptr_f(new sinosc_f("modulator", 2, 1, sr, 1, 1)));
+    node_ptr_f adder2 = data.tree->addNode(node_ptr_f(new add_f("adder2", 2, 1)));
 
-    node_f carrier = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq, 1.0)));
-    node_f head = data.g->createNode(node_f(new graphhead_f(1, 2)));
+    node_ptr_f carrier = data.tree->addNode(node_ptr_f(new sinosc_f("carrier", 2, 1, sr, carrFreq, 1.0)));
     
-    //initialize constants and connect ugens
-
-    adder1->constant(0, modIndex);
-    modenv->connect(0, 1, adder1);
-    adder1->connect(0, 1, mult);
-    mult->constant(0, modFreq);
-    mult->connect(0, SINOSC_AMP, modulator);
+    //initialize setInputs and setInput ugens
+    adder1->setInput(0, modIndex);
+    adder1->setInput(1, 0, modenv);
     
-    modulator->constant(SINOSC_FREQ, modFreq);
-    adder2->constant(0, carrFreq);
-    modulator->connect(0, 1, adder2);
+    mult->setInput(0, modFreq);
+    mult->setInput(1, 0, adder1);
     
-    adder2->connect(0, SINOSC_FREQ, carrier);
-    carrenv->connect(0, SINOSC_AMP, carrier);
-
-    carrier->connect(0, 0, head);
+    modulator->setInput(SINOSC_FREQ, modFreq);
+    modulator->setInput(SINOSC_AMP, 0, mult);
+    
+    adder2->setInput(0, carrFreq);
+    adder2->setInput(1, 0, modulator);
+    
+    carrier->setInput(SINOSC_FREQ, 0, adder2);
+    carrier->setInput(SINOSC_AMP, 0, carrenv);
+    
+    data.tree->setInput(0, 0, carrier);
 
 #elif (CIRCUIT == 3)
     sprintf(filename, "circuit3.wav");
-    //declare constants
+    //declare setInputs
     float modIndex = 0;
     float modIndexDev = 1;
     float carrAmp = 0.5;
@@ -148,63 +148,61 @@ int main(void)
     float modFreq =  300;
     
     //create ugen graph
-    //Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
-    //    const TFloat sus, const TFloat suslvl, const TFloat rel, const TFloat curve) :
-    node_f carrenv = data.g->createNode(node_f(new expenv_f(1, 2, sr, carrAmp,
+    data.tree = root_ptr_f(new root_f(1, 2));
+    node_ptr_f carrenv = data.tree->addNode(node_ptr_f(new expenv_f("carrenv", 1, 2, sr, carrAmp,
                                                             0.35 * dur_sec, 0.05 * dur_sec, 0.2 * dur_sec, 0.3 * dur_sec,
                                                             0.7 * carrAmp, 2)));
-    node_f modenv = data.g->createNode(node_f(new expenv_f(1, 1, sr, modIndexDev,
+    node_ptr_f modenv = data.tree->addNode(node_ptr_f(new expenv_f("modenv", 1, 1, sr, modIndexDev,
                                                            0.05 * dur_sec, 0.2 * dur_sec, 0.2 * dur_sec, 0.55 * dur_sec,
                                                            0.5 * modIndexDev, 3)));
-    node_f adder1 = data.g->createNode(node_f(new add_f(2, 1)));
-    node_f modulator = data.g->createNode(node_f(new sinosc_f(2, 2, sr, 1, 1)));
+    node_ptr_f adder1 = data.tree->addNode(node_ptr_f(new add_f("adder1", 2, 1)));
+    node_ptr_f modulator = data.tree->addNode(node_ptr_f(new sinosc_f("modulator", 2, 2, sr, 1, 1)));
     
-    node_f mult1 = data.g->createNode(node_f(new mult_f(2, 1)));
-    node_f adder2 = data.g->createNode(node_f(new add_f(2, 1)));
-    node_f adder3 = data.g->createNode(node_f(new add_f(2, 1)));
+    node_ptr_f mult1 = data.tree->addNode(node_ptr_f(new mult_f("mult1", 2, 1)));
+    node_ptr_f adder2 = data.tree->addNode(node_ptr_f(new add_f("adder2", 2, 1)));
+    node_ptr_f adder3 = data.tree->addNode(node_ptr_f(new add_f("adder3", 2, 1)));
 
-    node_f mult2 = data.g->createNode(node_f(new mult_f(2, 1)));
-    node_f mult3 = data.g->createNode(node_f(new mult_f(2, 1)));
-    node_f carrier1 = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq1, 1.0)));
-    node_f carrier2 = data.g->createNode(node_f(new sinosc_f(2, 1, sr, carrFreq2, 1.0)));
+    node_ptr_f mult2 = data.tree->addNode(node_ptr_f(new mult_f("mult2", 2, 1)));
+    node_ptr_f mult3 = data.tree->addNode(node_ptr_f(new mult_f("mult3", 2, 1)));
+    node_ptr_f carrier1 = data.tree->addNode(node_ptr_f(new sinosc_f("carrier1", 2, 1, sr, carrFreq1, 1.0)));
+    node_ptr_f carrier2 = data.tree->addNode(node_ptr_f(new sinosc_f("carrier2", 2, 1, sr, carrFreq2, 1.0)));
 
-    node_f adder4 = data.g->createNode(node_f(new add_f(2, 1)));
-    node_f head = data.g->createNode(node_f(new graphhead_f(1, 2)));
+    node_ptr_f adder4 = data.tree->addNode(node_ptr_f(new add_f("adder4", 2, 1)));
     
-    //initialize constants and connect ugens
+    //initialize setInputs and setInput ugens
+    adder1->setInput(0, modIndex);
+    adder1->setInput(1, 0, modenv);
     
-    adder1->constant(0, modIndex);
-    modenv->connect(0, 1, adder1);
-    adder1->connect(0, 1, mult1);
-    mult1->constant(0, modFreq);
-    mult1->connect(0, SINOSC_AMP, modulator);
+    mult1->setInput(0, modFreq);
+    mult1->setInput(1, 0, adder1);
     
-    modulator->constant(SINOSC_FREQ, modFreq);
-    adder2->constant(0, 80.0);
-    modulator->connect(0, 1, adder2);
-
-    modulator->connect(1, 0, mult2);
-    mult2->constant(1, 0.5);
+    modulator->setInput(SINOSC_FREQ, modFreq);
+    modulator->setInput(SINOSC_AMP, 0, mult1);
     
-    mult2->connect(0, 0, adder3);
-    adder3->constant(1, carrFreq2);
-
-    adder2->connect(0, SINOSC_FREQ, carrier1);
-    carrenv->connect(0, SINOSC_AMP, carrier1);
+    adder2->setInput(0, 80.0);
+    adder2->setInput(1, 0, modulator);
     
-    carrenv->connect(1, 0, mult3);
-    mult3->constant(1, 0.2);
+    mult2->setInput(0, 1, modulator);
+    mult2->setInput(1, 0.5);
     
-    mult3->connect(0, SINOSC_AMP, carrier2);
-    adder3->connect(0, SINOSC_FREQ, carrier2);
+    adder3->setInput(0, 0, mult2);
+    adder3->setInput(1, carrFreq2);
     
-    carrier1->connect(0, 0, adder4);
-    carrier2->connect(0, 1, adder4);
+    carrier1->setInput(SINOSC_FREQ, 0, adder2);
+    carrier1->setInput(SINOSC_AMP, 0, carrenv);
     
-    adder4->connect(0, 0, head);
-
+    mult3->setInput(0, 1, carrenv);
+    mult3->setInput(1, 0.2);
+    
+    carrier2->setInput(SINOSC_FREQ, 0, adder3);
+    carrier2->setInput(SINOSC_AMP, 0, mult3);
+    
+    adder4->setInput(0, 0, carrier1);
+    adder4->setInput(1, 0, carrier2);
+    
+    data.tree->setInput(0, 0, adder4);
+    
 #endif
-    
     
     SF_INFO sfinfo;
     sfinfo.channels = 1;

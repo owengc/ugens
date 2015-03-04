@@ -23,12 +23,8 @@
 using namespace std;
 using namespace chrono;
 
-template<class TFloat>
-class Graph;
-
 template <class TFloat>
-class Node : public enable_shared_from_this<Node<TFloat>>{
-    friend class Graph<TFloat>;
+class Node{
 public:
     Node(const string name, const int numIns, const int numOuts) :
     name(name), _numIns(numIns), _numOuts(numOuts), _isHead(false), _id(Node<TFloat>::_idCounter++), _lastTick(high_resolution_clock::now()){
@@ -45,7 +41,7 @@ public:
         
     };
     
-    void traverse(const high_resolution_clock::time_point& currentTick){
+    void traverse(const high_resolution_clock::time_point& currentTick = std::chrono::high_resolution_clock::now()){
         if(currentTick > _lastTick){
             for(int i = 0; i < _numIns; i++){
                 if(_inputs[i] == nullptr)
@@ -68,12 +64,17 @@ public:
 
     virtual void tick() = 0;
 
-    void connect(const int outputID, const int inputID, shared_ptr<Node<TFloat>> destination){
-        destination->_inputs[inputID] = _outputs[outputID];
-        destination->_sources[inputID] = Node<TFloat>::shared_from_this();
+//    void connect(const int outputID, const int inputID, shared_ptr<Node<TFloat>> destination){
+//        destination->_inputs[inputID] = _outputs[outputID];
+//        destination->_sources[inputID] = Node<TFloat>::shared_from_this();
+//    };
+    
+    void setInput(const int inputID, const int outputID, shared_ptr<Node<TFloat>> source){
+        _inputs[inputID] = source->_outputs[outputID];
+        _sources[inputID] = source;
     };
     
-    void constant(const int inputID, TFloat value){
+    void setInput(const int inputID, TFloat value){
         _inputs[inputID] = make_shared<TFloat>(value);
         _sources[inputID] = nullptr;
     }
@@ -114,6 +115,9 @@ protected:
 template <typename TFloat>
 unsigned int Node<TFloat>::_idCounter = 0;
 
+template<class TFloat> using node = shared_ptr<Node<TFloat>>;
+using node_ptr_f = shared_ptr<Node<float>>;
+using node_ptr_d = shared_ptr<Node<double>>;
 
 
 

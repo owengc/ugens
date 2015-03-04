@@ -19,9 +19,8 @@ const int NUM_STAGES = 4;
 template <class TFloat>
 class Expenv : public Node<TFloat>{
 public:
-    Expenv(const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec,
-           const TFloat sus, const TFloat rel, const TFloat suslvl, const TFloat curve) :
-            Node<TFloat>("expenv_" + to_string(_instanceCounter++), 1, numOuts),
+    Expenv(const string& name, const int numIns, const int numOuts, const int sr, const TFloat amp, const TFloat att, const TFloat dec, const TFloat sus, const TFloat rel, const TFloat suslvl, const TFloat curve) :
+        Node<TFloat>(name, 0, numOuts),
     _sr(sr), _amp(amp), _suslvl(suslvl), _curve(curve), _counter(0), _stage(0){
         //initialize parameters
         Node<TFloat>::params.insert(make_pair("amp", Parameter<TFloat>("amp", amp, 0.0, 1.0)));
@@ -111,14 +110,13 @@ private:
     int _counter;
     int _stage;
     int _sr;
-    
-    static unsigned int _instanceCounter;
 };
 
-template<typename TFloat>
-unsigned int Expenv<TFloat>::_instanceCounter = 0;
 
+template<class TFloat> using expenv_ptr = shared_ptr<Expenv<TFloat>>;
 using expenv_f = Expenv<float>;
 using expenv_d = Expenv<double>;
+using expenv_ptr_f = shared_ptr<Expenv<float>>;
+using expenv_ptr_d = shared_ptr<Expenv<double>>;
 
 #endif /* defined(__AudioGraph_FM__expenv__) */

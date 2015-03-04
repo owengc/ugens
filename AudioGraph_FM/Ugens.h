@@ -14,7 +14,7 @@
 #include "ugens/mult.h"
 #include "ugens/add.h"
 #include "ugens/expenv.h"
-#include "ugens/graphhead.h"
+#include "ugens/root.h"
 
 
 
