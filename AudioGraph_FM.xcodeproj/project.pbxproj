@@ -48,6 +48,7 @@
 		C69E097A1A967D540011EA61 /* mult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mult.h; path = ugens/mult.h; sourceTree = "<group>"; };
 		C69E097B1A967D540011EA61 /* expenv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = expenv.h; path = ugens/expenv.h; sourceTree = "<group>"; };
 		C6C438341AA6C49C00109709 /* root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = root.h; path = ugens/root.h; sourceTree = "<group>"; };
+		C6F298691AB025B100CB6A0B /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = ../../../../../../code/plugins/projects/libogc/include/Filter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +93,7 @@
 		C69E09571A967B970011EA61 /* AudioGraph_FM */ = {
 			isa = PBXGroup;
 			children = (
+				C6B811BF1AB00085001508FF /* DSP */,
 				C69E09751A967CA10011EA61 /* Libraries */,
 				C69E09581A967B970011EA61 /* main.cpp */,
 				C69E09611A967BBE0011EA61 /* TreeStuff */,
@@ -130,6 +132,14 @@
 				C69E09761A967CAC0011EA61 /* portaudio.h */,
 			);
 			name = Libraries;
+			sourceTree = "<group>";
+		};
+		C6B811BF1AB00085001508FF /* DSP */ = {
+			isa = PBXGroup;
+			children = (
+				C6F298691AB025B100CB6A0B /* Filter.h */,
+			);
+			name = DSP;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,12 +290,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/local/include,
+					/Users/ogc/Documents/code/plugins/projects/libogc/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/usr/local/lib,
 					/usr/local/Cellar/libsndfile/1.0.25/lib,
+					/Users/ogc/Documents/code/plugins/projects/libogc/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -302,12 +314,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/local/include,
+					/Users/ogc/Documents/code/plugins/projects/libogc/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/usr/local/lib,
 					/usr/local/Cellar/libsndfile/1.0.25/lib,
+					/Users/ogc/Documents/code/plugins/projects/libogc/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

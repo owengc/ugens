@@ -15,6 +15,10 @@
 #include <math.h>
 #include <assert.h>
 #include "Ugens.h"
+#include "Filter.h"
+#include "Oscillator.h"
+
+#define CIRCUIT 4
 
 SNDFILE * sf;
 const int BLOCK_SIZE = 64;
@@ -28,6 +32,10 @@ typedef struct
 {
     root_ptr_f tree;
     int numOuts;
+    Saw<float> * saw;
+    Sine<float> * lfo;
+    Lowpass<float> * lp;
+    float lpf;
 } paData;
 
 static int paCallback( const void *inputBuffer, void *outputBuffer,
@@ -43,12 +51,21 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
     unsigned int i, j;
     float temp;
     (void) in; /* Prevent unused variable warning. */
-    for( i=0; i<framesPerBuffer; i++ ){
-        data->tree->traverse();
+    for(i = 0; i < framesPerBuffer; i++){
+//        data->tree->traverse();
+        data->lp->setCutoff(sr, data->lpf * (1.5 + data->lfo->next()));
         for(j = 0; j < data->numOuts; j++){
-            temp = data->tree->output(j);
-             assert(fabsf(temp) <= 1.0);
-            *out++ = data->tree->output(j);
+            if(*out > 0){
+                temp = 0;
+            }
+            #if(CIRCUIT == 4)
+            *out++ = data->lp->next(data->saw->next());
+            #elif(CIRCUIT == 5)
+            *out++ = data->saw->next();
+            #else
+                *out++ = data->tree->output(j);
+            #endif
+
         }
         *writePos++ = *out;
     }
@@ -64,9 +81,17 @@ int main(void)
     data.numOuts = 2;
     data.tree = root_ptr_f(new root_f(1, data.numOuts));
     char filename[16];
+    data.saw = new Saw<float>(2048, sr);
+    data.saw->setFrequency(440.0);
+    data.saw->setAmplitude(0.75);
+    data.lfo = new Sine<float>(2048, sr);
+    data.lfo->setFrequency(0.3);
+    data.lfo->setAmplitude(1.0);
+    data.lpf = 4000;
+    data.lp = new Lowpass<float>(sr, data.lpf);
 
     
-#define CIRCUIT 3
+
     
 #if ( CIRCUIT == 1)
     sprintf(filename, "circuit1.wav");
@@ -197,7 +222,10 @@ int main(void)
     adder4->setInput(1, 0, carrier2);
     
     data.tree->setInput(0, 0, adder4);
-    
+#elif (CIRCUIT == 4)
+    sprintf(filename, "filteredSaw.wav");
+#else
+    sprintf(filename, "saw.wav");
 #endif
     
     SF_INFO sfinfo;
