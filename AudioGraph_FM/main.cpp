@@ -15,13 +15,11 @@
 #include <math.h>
 #include <assert.h>
 #include "Ugens.h"
-#include "Filter.h"
-#include "Oscillator.h"
 
-#define CIRCUIT 4
+#define CIRCUIT 3
 
 SNDFILE * sf;
-const int BLOCK_SIZE = 64;
+const int BLOCK_SIZE = 128;
 const int sr = 44100;
 const float dur_sec = 5;
 const int sfSamples = dur_sec * sr;
@@ -32,10 +30,6 @@ typedef struct
 {
     root_ptr_f tree;
     int numOuts;
-    Saw<float> * saw;
-    Sine<float> * lfo;
-    Lowpass<float> * lp;
-    float lpf;
 } paData;
 
 static int paCallback( const void *inputBuffer, void *outputBuffer,
@@ -49,25 +43,15 @@ static int paCallback( const void *inputBuffer, void *outputBuffer,
     float *out = (float*)outputBuffer;
     float *in = (float*)inputBuffer;
     unsigned int i, j;
-    float temp;
+    float temp = 0;
     (void) in; /* Prevent unused variable warning. */
     for(i = 0; i < framesPerBuffer; i++){
-//        data->tree->traverse();
-        data->lp->setCutoff(sr, data->lpf * (1.5 + data->lfo->next()));
+        data->tree->traverse();
         for(j = 0; j < data->numOuts; j++){
-            if(*out > 0){
-                temp = 0;
-            }
-            #if(CIRCUIT == 4)
-            *out++ = data->lp->next(data->saw->next());
-            #elif(CIRCUIT == 5)
-            *out++ = data->saw->next();
-            #else
-                *out++ = data->tree->output(j);
-            #endif
-
+            temp = data->tree->output(j);
+            *out++ = temp;
         }
-        *writePos++ = *out;
+        *writePos++ = temp;
     }
     return 0;
 }
@@ -81,17 +65,6 @@ int main(void)
     data.numOuts = 2;
     data.tree = root_ptr_f(new root_f(1, data.numOuts));
     char filename[16];
-    data.saw = new Saw<float>(2048, sr);
-    data.saw->setFrequency(440.0);
-    data.saw->setAmplitude(0.75);
-    data.lfo = new Sine<float>(2048, sr);
-    data.lfo->setFrequency(0.3);
-    data.lfo->setAmplitude(1.0);
-    data.lpf = 4000;
-    data.lp = new Lowpass<float>(sr, data.lpf);
-
-    
-
     
 #if ( CIRCUIT == 1)
     sprintf(filename, "circuit1.wav");
@@ -222,10 +195,6 @@ int main(void)
     adder4->setInput(1, 0, carrier2);
     
     data.tree->setInput(0, 0, adder4);
-#elif (CIRCUIT == 4)
-    sprintf(filename, "filteredSaw.wav");
-#else
-    sprintf(filename, "saw.wav");
 #endif
     
     SF_INFO sfinfo;
@@ -259,6 +228,8 @@ int main(void)
     if( err != paNoError )
         printf( "PortAudio error: %s\n", Pa_GetErrorText( err ) );
     
+    
+    //need some extra time for the callback to finish
     Pa_Sleep(dur_sec * 1000 + (2 * BLOCK_SIZE/sr));
     
     err = Pa_StopStream( stream );
